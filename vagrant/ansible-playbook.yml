@@ -1,0 +1,86 @@
+- hosts: all
+  remote_user: vagrant
+  become: true
+  become_user: root
+  become_method: sudo
+
+  tasks:
+
+
+#############################################################################
+###
+### Setup Elasticsearch repository
+###
+
+# version 6
+  - name: Add / enable the Elasticsearch repo
+    yum_repository:
+      name: elasticsearch-6.x
+      description: Elastic repo for 6.x
+      baseurl: https://artifacts.elastic.co/packages/6.x/yum
+      gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      file: elasticsearch
+      gpgcheck: yes
+      enabled: yes
+
+
+#############################################################################
+###
+### Update entire OL7 system to the latest versions...
+###
+
+  - name: upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+
+
+#############################################################################
+###
+### Install packages Elasticsearch, Logstash and Kibana, prerequisites
+###
+
+# Note: this does NOT yet enable the services!
+#
+# This playbook is intended to
+# * take an OL7 base box
+# * update all components
+# * install all essential packages for Elastic search
+# * save time with repeated destroy/up cycles and
+# * provide you with an up2date base box while developing your own VMs
+
+  - name: Installing elasticsearch CORE components
+    yum:
+       name: "{{ item }}"
+       state: latest
+       update_cache: yes
+    with_items:
+       - java-1.8.0-openjdk
+       - net-tools
+       - elasticsearch
+       - logstash
+       - kibana
+       - jq
+    when:
+       - ansible_os_family == "RedHat"
+       - ansible_distribution_major_version == "7"
+
+
+#############################################################################
+###
+### Install beats
+###
+
+  - name: Installing common elastic beats
+    yum:
+       name: "{{ item }}"
+       state: latest
+       update_cache: yes
+    with_items:
+       - filebeat
+       - heartbeat-elastic
+       - metricbeat
+       - packetbeat
+    when:
+       - ansible_os_family == "RedHat"
+       - ansible_distribution_major_version == "7"
