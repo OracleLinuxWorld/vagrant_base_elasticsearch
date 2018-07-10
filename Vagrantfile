@@ -3,9 +3,9 @@ Vagrant.configure("2") do |config|
   # Create a base box with OL7 and pre-install the latest Elastic 6.x components
   config.vm.define "es_basebox" do |es_basebox|
     es_basebox.vm.synced_folder "./vagrant", "/vagrant"
-    es_basebox.vm.box = "ol7-latest"
+    es_basebox.vm.box = "ol75"
     es_basebox.vm.hostname = 'es-basebox'
-    es_basebox.vm.box_url = "https://yum.oracle.com/boxes/oraclelinux/latest/ol7-latest.box"
+    es_basebox.vm.box_url = "http://yum.oracle.com/boxes/oraclelinux/ol75/ol75.box"
     es_basebox.vm.network :"private_network", type: "dhcp"
     es_basebox.vm.network "forwarded_port", guest: 9200, host: 9200, protocol: "tcp"
     es_basebox.vm.network "forwarded_port", guest: 5601, host: 5601, protocol: "tcp"
