@@ -60,11 +60,26 @@
        - elasticsearch
        - logstash
        - kibana
-       - jq
     when:
        - ansible_os_family == "RedHat"
        - ansible_distribution_major_version == "7"
 
+  - name: Installing elasticsearch additional packages
+    yum:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    with_items:
+      - jq
+      - nc
+      - telnet
+      - tcpdump
+      - curl
+      - zip
+      - unzip
+    when:
+      - ansible_os_family == "RedHat"
+      - ansible_distribution_major_version == "7"
 
 #############################################################################
 ###
